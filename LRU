@@ -1,0 +1,64 @@
+#include <stdio.h>
+int main(void) {
+  int pageFrames;
+  printf("Enter the no. of pageFrames: ");
+  scanf("%d", &pageFrames);
+  int totalPages;
+  printf("Enter the total no. of pages: ");
+  scanf("%d", &totalPages);
+  int arr1[totalPages], s[pageFrames];
+  for (int i = 0; i < pageFrames; i++) {
+    s[i] = 9999;
+  }
+  printf("Enter the Page No's below\n");
+  for (int i = 0; i < totalPages; i++) {
+    scanf("%d", &arr1[i]);
+  }
+  int i = 0, j = 0, exists = 0, pageFaults = 0, first9999 = 9999, lruf = -1,
+      found = 0;
+  while (i < totalPages) {
+    j = 0;
+    while (j < pageFrames) {
+      printf("%d ", s[j]);
+      if (arr1[i] == s[j]) {
+        exists = 1;
+      }
+      if (first9999 == 9999 && s[j] == 9999)
+        first9999 = j;
+      j++;
+    }
+    printf("\n");
+    if (exists == 0) {
+      if (first9999 != 9999) {
+        s[first9999] = arr1[i];
+        first9999 = 9999;
+      } else {
+        int p = i;
+        for (int k = 0; k < pageFrames; k++) {
+          int ptemp = i - 1;
+          while (arr1[ptemp] != s[k] && ptemp >= 0) {
+            ptemp--;
+          }
+          if (ptemp < p) {
+            p = ptemp;
+          }
+        }
+        for (int k = 0; k < pageFrames; k++) {
+          if (arr1[p] == s[k]) {
+            lruf = k;
+            break;
+          }
+        }
+        s[lruf] = arr1[i];
+      }
+      printf("pf = %d \n", arr1[i]);
+      pageFaults++;
+    } else {
+      exists = 0;
+    }
+    i++;
+  }
+  printf("\nPageFault = %d\n", pageFaults);
+  float FaultFrequency = (float)pageFaults / totalPages;
+  printf("\nFault Frequency = %f\n", FaultFrequency * 100);
+}
